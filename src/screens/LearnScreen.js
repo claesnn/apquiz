@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
 import LearnCard from '../components/LearnCard';
+import styles from '../constants/styles';
 
 function LearnScreen({ navigation }) {
     return (

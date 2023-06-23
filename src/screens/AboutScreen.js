@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { Paragraph, Text } from 'react-native-paper';
+import styles from '../constants/styles';
 
 function AboutScreen({ navigation }) {
     return (
