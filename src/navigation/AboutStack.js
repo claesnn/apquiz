@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 function AboutStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Info" component={AboutScreen} />
+            <Stack.Screen name="Info" component={AboutScreen} options={{ headerTransparent: true, headerBlurEffect: true, headerTitleStyle: { fontSize: 20, fontFamily: 'PlayfairDisplay_700Bold' } }} />
         </Stack.Navigator>
     );
 }

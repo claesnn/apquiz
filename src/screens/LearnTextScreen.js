@@ -8,7 +8,7 @@ function LearnTextScreen({ navigation, route }) {
     })
 
     return (
-        <ScrollView style={{ marginTop: 70, padding: 10 }}>
+        <ScrollView contentContainerStyle={{ padding: 10, marginVertical: 60, paddingBottom: 70 }}>
             {LearnData[route.params['learnCategory']]}
         </ScrollView>
     );

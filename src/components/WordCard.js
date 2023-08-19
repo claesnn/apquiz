@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box, Text, Pressable, HStack, Badge, Spacer, Flex } from 'native-base';
+import { Box, Text, Pressable, HStack, Badge, Spacer } from 'native-base';
 
-function LearnCard({ navigation, title, text = 'placeholder', cover = '../assets/placeholder.jpg' }) {
+function QuizCard({ navigation, title, text = 'placeholder', cover = '../assets/placeholder.jpg' }) {
     return <Box alignItems="center">
         <Pressable width="full" mb='3' onPress={() => {
-            navigation.navigate('LærTekst', { learnCategory: title })
+            navigation.navigate('OrdLeg', { game: title })
         }}>
             {({
                 isHovered,
@@ -20,16 +20,16 @@ function LearnCard({ navigation, title, text = 'placeholder', cover = '../assets
                         <Badge colorScheme="darkBlue" _text={{
                             color: "white"
                         }} variant="solid" rounded="4" mr="1">
-                            Business
+                            90 sekunder
                         </Badge>
-                        <Badge colorScheme="success" _text={{
+                        <Badge colorScheme="darkGreen" _text={{
                             color: "white"
                         }} variant="solid" rounded="4">
-                            Game
+                            10 spørgsmål
                         </Badge>
                         <Spacer />
                         <Text fontSize={10} color="coolGray.800">
-                            1 month ago
+                            Svarstatistik: 80%
                         </Text>
                     </HStack>
                     <Text color="coolGray.800" mt="3" fontWeight="medium" fontSize="xl">
@@ -38,17 +38,10 @@ function LearnCard({ navigation, title, text = 'placeholder', cover = '../assets
                     <Text mt="2" fontSize="sm" color="coolGray.700">
                         {text}
                     </Text>
-                    <Flex>
-                        {isFocused ? <Text mt="2" fontSize={12} fontWeight="medium" textDecorationLine="underline" color="darkBlue.600" alignSelf="flex-start">
-                            Read More
-                        </Text> : <Text mt="2" fontSize={12} fontWeight="medium" color="darkBlue.600">
-                            Read More
-                        </Text>}
-                    </Flex>
                 </Box>;
             }}
         </Pressable>
     </Box>;
 }
 
-export default LearnCard;
+export default QuizCard;

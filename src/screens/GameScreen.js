@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Button, Card, Portal, Modal } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Button, Modal, Text, Progress, Center } from 'native-base';
 import data from '../constants/QuizData';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import QuizOption from '../components/QuizOption';
+import ConfettiCannon from 'react-native-confetti-cannon';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 function GameScreen({ navigation, route }) {
+    const maxCountdown = 45;
+
     const [previousQuestions, setPreviousQuestions] = useState([])
     var gameCategory = route.params['spil']
 
@@ -26,11 +30,8 @@ function GameScreen({ navigation, route }) {
     const [isOptionDisabled, setIsOptionDisabled] = useState(null);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
+    const [countdown, setCountdown] = useState(maxCountdown);
 
-
-    useEffect(() => {
-        navigation.setOptions({ title: route.params['spil'] })
-    })
 
     const validateAnswer = (selectedOption) => {
         let correct_option = data[currentQuestion]['correct'];
@@ -42,6 +43,18 @@ function GameScreen({ navigation, route }) {
         }
     }
 
+    useEffect(() => {
+        const timer = (countdown > 0) && setInterval(() => setCountdown(countdown - 1), 1000);
+        if (countdown == 0) {
+            setShowScore(true);
+        }
+        return () => clearInterval(timer);
+    }, [countdown]);
+
+    useEffect(() => {
+        navigation.setOptions({ title: route.params['spil'] })
+    })
+
 
 
     const handleNext = () => {
@@ -51,6 +64,7 @@ function GameScreen({ navigation, route }) {
 
         if ((previousQuestions.length == 5) || (validOptionsInCategory.length == 0)) {
             setShowScore(true);
+            setCountdown(0);
         } else {
             setCurrentQuestion(getNewQuestion());
             setCurrentOptionSelected(null);
@@ -65,19 +79,30 @@ function GameScreen({ navigation, route }) {
         const navigation = useNavigation();
 
         return (
-            <Portal>
+            <>
                 <Modal
-                    visible={showScore}
-                    onDismiss={() => navigation.navigate('Quiz')}
-                    contentContainerStyle={{ backgroundColor: 'white', padding: 30 }}
+                    isOpen={showScore}
+                    onClose={() => navigation.navigate('Quiz')}
+                    size="lg"
                 >
-                    {
-                        score == 5 ? (<Text>Tillykke! Du svarede korrekt på alle!</Text>) : (<Text>Du svarede korrekt på {score} ud af 5. Prøv igen!</Text>)
-                    }
+                    {showScore && <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />}
+                    <Modal.Content maxWidth="400px">
+                        <Modal.CloseButton />
+                        <Modal.Header>Quiz Status!</Modal.Header>
+                        <Modal.Body>
+                            {
+                                score == 5 ? (<Text>Tillykke! Du svarede korrekt på alle!</Text>) : (<Text>Du svarede korrekt på {score} ud af 5. Prøv igen!</Text>)
+                            }
+                        </Modal.Body>
+                    </Modal.Content>
                 </Modal>
-            </Portal>
+            </>
         );
     }
+
+
+
+
 
 
     const renderOptions = () => {
@@ -85,35 +110,14 @@ function GameScreen({ navigation, route }) {
             <>
                 {
                     data[currentQuestion]?.answers.map(answer => (
-                        <TouchableOpacity
-                            activeOpacity={0.6}
+                        <QuizOption
                             key={answer}
                             onPress={() => validateAnswer(answer)}
                             disabled={isOptionDisabled}
-                        >
-                            <Card
-                                mode='contained'
-                                style={{ marginBottom: 8 }}>
-                                <Card.Content>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                        }}
-                                    >
-                                        <Text>{answer}</Text>
-                                        {
-                                            answer == correctOption ? (
-                                                <MaterialCommunityIcons name='check-bold' color='green' size={18} />
-                                            ) : answer == currentOptionSelected ? (
-                                                <MaterialCommunityIcons name='skull-crossbones' color='red' size={18} />
-                                            ) : null
-                                        }
-                                    </View>
-                                </Card.Content>
-                            </Card>
-                        </TouchableOpacity>
+                            text={answer}
+                            correct={correctOption}
+                            selected={currentOptionSelected}
+                        />
                     ))
                 }
             </>
@@ -122,14 +126,20 @@ function GameScreen({ navigation, route }) {
 
     return (
         <>
-            <View>
-                {showModal()}
-            </View>
-            <ScrollView style={{ marginTop: 70, padding: 10 }}>
-                <Text style={{ marginBottom: 30, fontSize: 20 }}><Text style={{ fontWeight: 'bold' }}>Spørgsmål:</Text> {data[currentQuestion]['question']}</Text>
+
+
+            <ScrollView contentContainerStyle={{ padding: 10 }}>
+                <Progress marginTop={65} value={countdown} max={maxCountdown} size="xs" colorScheme="darkBlue" />
+                <Text style={{ marginBottom: 20, marginTop: 20, fontSize: 20 }}>
+                    <Text style={{ fontWeight: 'bold' }}>Spørgsmål {previousQuestions.length}/5: </Text>
+                    {data[currentQuestion]['question']}
+                </Text>
                 {renderOptions()}
                 <Button style={{ marginTop: 20 }} onPress={() => handleNext()}>Næste spørgsmål</Button>
             </ScrollView>
+            <View>
+                {showModal()}
+            </View>
         </>
     );
 }

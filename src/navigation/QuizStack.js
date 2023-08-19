@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 function QuizStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Quiz" component={QuizScreen} />
+            <Stack.Screen name="Quiz" component={QuizScreen} options={{ headerTransparent: true, headerBlurEffect: true, headerTitleStyle: { fontSize: 20, fontFamily: 'PlayfairDisplay_700Bold' } }} />
         </Stack.Navigator>
     );
 }
